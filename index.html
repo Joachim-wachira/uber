@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uber by Dan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #000000;
+            --secondary: #1DB954;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --danger: #dc3545;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo i {
+            color: var(--secondary);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--secondary);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+
+        .booking-form {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .map-container {
+            height: 300px;
+            margin-bottom: 1.5rem;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        #map {
+            height: 100%;
+            width: 100%;
+        }
+
+        .vehicle-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .vehicle-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .vehicle-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .vehicle-card.selected {
+            border-color: var(--secondary);
+        }
+
+        .vehicle-header {
+            padding: 1.5rem;
+            text-align: center;
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .vehicle-body {
+            padding: 1.5rem;
+        }
+
+        .vehicle-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--secondary);
+            margin: 0.5rem 0;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--secondary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #17a745;
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .result {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+            text-align: center;
+            display: none;
+        }
+
+        .fare-amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--secondary);
+            margin: 1rem 0;
+        }
+
+        .customer-care {
+            background-color: var(--primary);
+            color: white;
+            padding: 3rem 2rem;
+            margin-top: 3rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .customer-care h2 {
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+
+        .distance-info {
+            background-color: #e9f7ef;
+            padding: 0.75rem;
+            border-radius: 5px;
+            margin-top: 0.5rem;
+            text-align: center;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .vehicle-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <i class="fas fa-car"></i>
+            <span>Uber by Dan</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#"><i class="fas fa-info-circle"></i> About</a></li>
+                <li><a href="#"><i class="fas fa-question-circle"></i> Help</a></li>
+                <li><a href="#"><i class="fas fa-user"></i> Account</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <section class="hero">
+            <h1>Ride with Uber by Dan</h1>
+            <p>Get where you're going with the tap of a button. Choose from motorcycles, regular cars, or luxurious vehicles.</p>
+        </section>
+
+        <section class="booking-form">
+            <h2>Book Your Ride</h2>
+            <form id="rideForm">
+                <div class="form-group">
+                    <label for="pickup"><i class="fas fa-map-marker-alt"></i> Pickup Location</label>
+                    <input type="text" id="pickup" class="form-control" placeholder="Enter pickup location" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="destination"><i class="fas fa-flag-checkered"></i> Destination</label>
+                    <input type="text" id="destination" class="form-control" placeholder="Enter destination" required>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-map"></i> Route Map</label>
+                    <div class="map-container">
+                        <div id="map"></div>
+                    </div>
+                    <div class="distance-info" id="distanceInfo">
+                        <i class="fas fa-road"></i> Distance: <span id="calculatedDistance">0</span> km
+                    </div>
+                </div>
+                
+                <h3>Select Your Ride</h3>
+                <div class="vehicle-options">
+                    <div class="vehicle-card" data-type="motorcycle" data-rate="50">
+                        <div class="vehicle-header">
+                            <i class="fas fa-motorcycle fa-3x"></i>
+                            <h3>Motorcycle</h3>
+                        </div>
+                        <div class="vehicle-body">
+                            <p>Quick and affordable rides through traffic</p>
+                            <div class="vehicle-price">50 KES/km</div>
+                            <button type="button" class="btn select-vehicle">Select</button>
+                        </div>
+                    </div>
+                    
+                    <div class="vehicle-card" data-type="regular" data-rate="70">
+                        <div class="vehicle-header">
+                            <i class="fas fa-car fa-3x"></i>
+                            <h3>Regular Car</h3>
+                        </div>
+                        <div class="vehicle-body">
+                            <p>Comfortable everyday rides at a great price</p>
+                            <div class="vehicle-price">70 KES/km</div>
+                            <button type="button" class="btn select-vehicle">Select</button>
+                        </div>
+                    </div>
+                    
+                    <div class="vehicle-card" data-type="luxurious" data-rate="200">
+                        <div class="vehicle-header">
+                            <i class="fas fa-car-side fa-3x"></i>
+                            <h3>Luxurious Car</h3>
+                        </div>
+                        <div class="vehicle-body">
+                            <p>Premium vehicles for special occasions</p>
+                            <div class="vehicle-price">200 KES/km</div>
+                            <button type="button" class="btn select-vehicle">Select</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-block" id="calculateBtn" disabled>
+                    <i class="fas fa-calculator"></i> Calculate Fare
+                </button>
+            </form>
+            
+            <div class="result" id="result">
+                <h3>Your Trip Fare</h3>
+                <p>From <span id="fromLocation"></span> to <span id="toLocation"></span></p>
+                <p>Vehicle: <span id="vehicleType"></span></p>
+                <p>Distance: <span id="tripDistance"></span> km</p>
+                <div class="fare-amount" id="fareAmount"></div>
+                <button class="btn" id="bookRide">
+                    <i class="fas fa-check"></i> Book This Ride
+                </button>
+            </div>
+        </section>
+        
+        <section class="customer-care">
+            <h2>Customer Care</h2>
+            <p>We're here to help with any questions or concerns</p>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <span>0759175112</span>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>caesarjoakim@gmail.com</span>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <footer>
+        <p>&copy; 2023 Uber by Dan. All rights reserved.</p>
+    </footer>
+
+    <!-- Google Maps API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDc7RnOq8Obb9Q7OBKYZs6N6YkL1p_0j8E&libraries=places"></script>
+    <script>
+        // Note: In a real application, you would need to replace the API key with your own
+        // For demonstration purposes, I'm using a placeholder key
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const vehicleCards = document.querySelectorAll('.vehicle-card');
+            const rideForm = document.getElementById('rideForm');
+            const resultDiv = document.getElementById('result');
+            const fromLocation = document.getElementById('fromLocation');
+            const toLocation = document.getElementById('toLocation');
+            const vehicleType = document.getElementById('vehicleType');
+            const tripDistance = document.getElementById('tripDistance');
+            const fareAmount = document.getElementById('fareAmount');
+            const bookRideBtn = document.getElementById('bookRide');
+            const calculateBtn = document.getElementById('calculateBtn');
+            const distanceInfo = document.getElementById('distanceInfo');
+            const calculatedDistance = document.getElementById('calculatedDistance');
+            
+            let selectedVehicle = null;
+            let map;
+            let directionsService;
+            let directionsRenderer;
+            let distance = 0;
+            
+            // Initialize Google Maps
+            function initMap() {
+                // Default location (Nairobi, Kenya)
+                const defaultLocation = { lat: -1.2921, lng: 36.8219 };
+                
+                // Create map
+                map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 12,
+                    center: defaultLocation
+                });
+                
+                // Initialize directions service and renderer
+                directionsService = new google.maps.DirectionsService();
+                directionsRenderer = new google.maps.DirectionsRenderer();
+                directionsRenderer.setMap(map);
+                
+                // Create autocomplete for pickup and destination
+                const pickupInput = document.getElementById('pickup');
+                const destinationInput = document.getElementById('destination');
+                
+                const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput);
+                const destinationAutocomplete = new google.maps.places.Autocomplete(destinationInput);
+                
+                // Set bounds to Kenya
+                const kenyaBounds = new google.maps.LatLngBounds(
+                    new google.maps.LatLng(-4.678, 33.908),
+                    new google.maps.LatLng(4.630, 41.899)
+                );
+                
+                pickupAutocomplete.setBounds(kenyaBounds);
+                destinationAutocomplete.setBounds(kenyaBounds);
+                
+                // Add event listeners to calculate route when both locations are set
+                pickupInput.addEventListener('change', calculateRoute);
+                destinationInput.addEventListener('change', calculateRoute);
+            }
+            
+            // Calculate route and distance
+            function calculateRoute() {
+                const pickup = document.getElementById('pickup').value;
+                const destination = document.getElementById('destination').value;
+                
+                if (pickup && destination) {
+                    const request = {
+                        origin: pickup,
+                        destination: destination,
+                        travelMode: 'DRIVING'
+                    };
+                    
+                    directionsService.route(request, function(result, status) {
+                        if (status === 'OK') {
+                            directionsRenderer.setDirections(result);
+                            
+                            // Get distance in kilometers
+                            distance = result.routes[0].legs[0].distance.value / 1000;
+                            calculatedDistance.textContent = distance.toFixed(2);
+                            distanceInfo.style.display = 'block';
+                            
+                            // Enable calculate button if vehicle is selected
+                            if (selectedVehicle) {
+                                calculateBtn.disabled = false;
+                            }
+                        } else {
+                            alert('Could not calculate route. Please check your locations.');
+                        }
+                    });
+                }
+            }
+            
+            // Vehicle selection
+            vehicleCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Remove selected class from all cards
+                    vehicleCards.forEach(c => c.classList.remove('selected'));
+                    
+                    // Add selected class to clicked card
+                    this.classList.add('selected');
+                    
+                    // Store selected vehicle data
+                    selectedVehicle = {
+                        type: this.getAttribute('data-type'),
+                        rate: parseInt(this.getAttribute('data-rate'))
+                    };
+                    
+                    // Enable calculate button if route is calculated
+                    if (distance > 0) {
+                        calculateBtn.disabled = false;
+                    }
+                });
+            });
+            
+            // Form submission
+            rideForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!selectedVehicle) {
+                    alert('Please select a vehicle type');
+                    return;
+                }
+                
+                if (distance === 0) {
+                    alert('Please enter valid pickup and destination locations');
+                    return;
+                }
+                
+                const pickup = document.getElementById('pickup').value;
+                const destination = document.getElementById('destination').value;
+                
+                // Calculate fare
+                const fare = distance * selectedVehicle.rate;
+                
+                // Update result display
+                fromLocation.textContent = pickup;
+                toLocation.textContent = destination;
+                vehicleType.textContent = selectedVehicle.type.charAt(0).toUpperCase() + selectedVehicle.type.slice(1);
+                tripDistance.textContent = distance.toFixed(2);
+                fareAmount.textContent = fare.toLocaleString() + ' KES';
+                
+                // Show result
+                resultDiv.style.display = 'block';
+                
+                // Scroll to result
+                resultDiv.scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Book ride button
+            bookRideBtn.addEventListener('click', function() {
+                alert('Your ride has been booked! A driver will be assigned shortly.');
+                rideForm.reset();
+                vehicleCards.forEach(c => c.classList.remove('selected'));
+                resultDiv.style.display = 'none';
+                distanceInfo.style.display = 'none';
+                selectedVehicle = null;
+                calculateBtn.disabled = true;
+                directionsRenderer.setDirections({routes: []});
+                map.setCenter({ lat: -1.2921, lng: 36.8219 });
+                map.setZoom(12);
+            });
+            
+            // Initialize the map
+            initMap();
+        });
+    </script>
+</body>
+</html>
